@@ -2,8 +2,11 @@ name: Update EPG XML Daily
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # Atualiza todos os dias às 03:00 UTC
-  workflow_dispatch:       # Permite atualizar manualmente
+    - cron: "0 3 * * *"    # Atualiza todos os dias às 03:00 UTC
+  workflow_dispatch:        # Permite atualizar manualmente
+
+permissions:
+  contents: write           # <--- PERMISSÃO IMPORTANTE
 
 jobs:
   update:
@@ -15,7 +18,7 @@ jobs:
 
       - name: Download latest EPG from M3U4U
         run: |
-          curl -L "http://m3u4u.com/xml/3m97ypgm7zt5k1w4ndxq" -o epg.xml
+          curl -A "Mozilla/5.0" -L "http://m3u4u.com/xml/3m97ypgm7zt5k1w4ndxq" -o epg.xml
 
       - name: Commit updated EPG
         run: |
