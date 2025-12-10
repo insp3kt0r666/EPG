@@ -1,0 +1,30 @@
+name: Update EPG XML Daily
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # Atualiza todos os dias às 03:00 UTC
+  workflow_dispatch:       # Permite atualizar manualmente
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download latest EPG from M3U4U
+        run: |
+          curl -L "http://m3u4u.com/xml/3m97ypgm7zt5k1w4ndxq" -o epg.xml
+
+      - name: Commit updated EPG
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add epg.xml
+          git commit -m "Auto-update EPG" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
